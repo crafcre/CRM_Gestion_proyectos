@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leads Management</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Agregar Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f6f9;
+        }
+
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            background-color: #5e4b8b;
+            color: white;
+            padding-top: 20px;
+        }
+
+        .sidebar a {
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .sidebar a:hover {
+            background-color: #4a3a6a;
+            border-radius: 5px;
+        }
+
+        .content {
+            margin-left: 270px;
+            padding: 20px;
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+        }
+
+        .card .card-header {
+            background-color: #6f4bcf;
+            color: white;
+            font-weight: bold;
+        }
+
+        .card img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #5e4b8b;
+            color: white;
+            border: none;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            color: #5e4b8b;
+        }
+
+        /* Estilos personalizados para el modal */
+        .modal-content {
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            background-color: #6f4bcf;
+            color: white;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .modal-body {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 20px;
+        }
+
+        .activities,
+        .client-details {
+            width: 48%;
+            background-color: #fafafa;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .activities h6,
+        .client-details h6 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #5e4b8b;
+        }
+
+        .activities ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .activities li {
+            background-color: #fff;
+            padding: 8px;
+            margin: 6px 0;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .activities li:hover {
+            background-color: #f1f1f1;
+        }
+
+        .client-details p {
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .client-details span {
+            font-weight: bold;
+        }
+
+        .pipeline-column {
+            min-height: 300px;
+            border: 1px dashed #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .draggable-card {
+            margin-bottom: 10px;
+            cursor: grab;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2><a href="index.html">SACTROM</a></h2>
+        <a href="leads.html">Leads</a>
+        <a href="contactos.html">Contactos</a>
+        <a href="reporte.html">Reportes</a>
+        <a href="pqr.html">PQR</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Tabs -->
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" id="table-tab" href="#table-view" data-bs-toggle="tab">Tabla</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pipelines-tab" href="#pipelines-view" data-bs-toggle="tab">Pipelines</a>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content mt-3">
+            <!-- Tabla -->
+            <div class="tab-pane fade show active" id="table-view">
+                <h3>Leads Table</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Vendedor</th>
+                            <th>Estado</th>
+                            <th>Email</th>
+                            <th>Cargo</th>
+                            <th>Empresa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Juan Pérez</td>
+                            <td>Vendedor 1</td>
+                            <td>Nuevo</td>
+                            <td>juan@example.com</td>
+                            <td>Gerente</td>
+                            <td>Empresa A</td>
+                        </tr>
+                        <tr>
+                            <td>María López</td>
+                            <td>Vendedor 2</td>
+                            <td>Contactado</td>
+                            <td>maria@example.com</td>
+                            <td>Directora</td>
+                            <td>Empresa B</td>
+                        </tr>
+                        <tr>
+                            <td>David García</td>
+                            <td>Vendedor 3</td>
+                            <td>Seguimiento</td>
+                            <td>david@example.com</td>
+                            <td>Supervisor</td>
+                            <td>Empresa C</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pipelines -->
+            <div class="tab-pane fade" id="pipelines-view">
+                <h3>Pipeline Stages</h3>
+
+                <!-- Contenedor general para todas las etapas -->
+                <div class="row">
+                    <!-- Nuevo -->
+                    <div class="col-md-3">
+                        <h4>Nuevo</h4>
+                        <div id="nuevo" class="pipeline-stage">
+                            <div class="card" data-bs-toggle="modal" data-bs-target="#pipelineModal"
+                                onclick="openModal('Juan Pérez', 'Empresa A', 'Nuevo', 5000, ['Llamada telefónica - 12/11/2024', 'Reunión virtual - 15/11/2024', 'Email enviado - 20/11/2024'])">
+
+                                <div class="card-header">Nuevo</div>
+                                <div class="card-body d-flex align-items-center">
+                                    <img src="https://via.placeholder.com/40" alt="User Icon">
+                                    <div>
+                                        <p>Nombre: Juan Pérez</p>
+                                        <p>Prioridad: Alta</p>
+                                        <p>Monto: $5.000.000</p>
+                                    </div>
+                                    <button class="btn btn-sm btn-primary ms-auto" data-bs-toggle="modal"
+                                        data-bs-target="#sendEmailModal">
+                                        <i class="bi bi-envelope"></i>
+                                    </button>
+
+                                </div>
+                            </div>
+                            <div class="card" data-bs-toggle="modal" data-bs-target="#pipelineModal"
+                            onclick="openModal('Juan Pérez', 'Empresa B', 'Nuevo', 3000000, ['Llamada telefónica - 12/11/2024', 'Reunión virtual - 15/11/2024', 'Email enviado - 20/11/2024'])">
+                                <div class="card-header">Nuevo</div>
+                                <div class="card-body d-flex align-items-center">
+                                    <img src="https://via.placeholder.com/40" alt="User Icon">
+                                    <div>
+                                        <p>Nombre: Carlos Quintero</p>
+                                        <p>Prioridad: Alta</p>
+                                        <p>Monto: $30.000.000</p>
+                                    </div>
+                                    <button class="btn btn-sm btn-primary ms-auto" data-bs-toggle="modal"
+                                        data-bs-target="#sendEmailModal">
+                                        <i class="bi bi-envelope"></i>
+                                    </button>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Propuesta -->
+                    <div class="col-md-3">
+                        <h4>Propuesta</h4>
+                        <div id="propuesta" class="pipeline-column">
+                            <!-- Aquí van las tarjetas en "Propuesta" -->
+                        </div>
+                    </div>
+
+                    <!-- Negociación -->
+                    <div class="col-md-3">
+                        <h4>Negociación</h4>
+                        <div id="negociacion" class="pipeline-column">
+                            <!-- Aquí van las tarjetas en "Negociación" -->
+                        </div>
+                    </div>
+
+                    <!-- Ganados -->
+                    <div class="col-md-3">
+                        <h4>Ganados</h4>
+                        <div id="ganados" class="pipeline-column">
+                            <!-- Aquí van las tarjetas en "Ganados" -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para detalles del pipeline -->
+    <div class="modal fade" id="pipelineModal" tabindex="-1" aria-labelledby="pipelineModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pipelineModalLabel">Detalles del Cliente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="client-details"></p>
+                    <ul id="activities-list"></ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Enviar Email -->
+    <div class="modal fade" id="sendEmailModal" tabindex="-1" aria-labelledby="sendEmailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"> <!-- Modal de tamaño grande -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sendEmailModalLabel">Enviar Email</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="sendEmailForm" class="w-80 mx-auto">
+                        <!-- Campo De -->
+                        <div class="mb-3">
+                            <label for="fromEmail" class="form-label">De:</label>
+                            <input type="email" class="form-control" id="fromEmail" value="tuemail@dominio.com"
+                                readonly>
+                        </div>
+                        <!-- Campo Para -->
+                        <div class="mb-3">
+                            <label for="toEmail" class="form-label">Para:</label>
+                            <input type="email" class="form-control" id="toEmail" required>
+                        </div>
+                        <!-- Campo Asunto -->
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Asunto:</label>
+                            <input type="text" class="form-control w-100" id="subject" required>
+                            <!-- Se asegura que ocupe el 100% del ancho -->
+                        </div>
+                        <!-- Campo Cuerpo -->
+                        <div class="mb-3">
+                            <label for="body" class="form-label">Cuerpo:</label>
+                            <textarea class="form-control w-100" id="body" rows="8" required></textarea>
+                            <!-- Se asegura que ocupe el 100% del ancho -->
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="sendEmail()">
+                        <i class="bi bi-send"></i> Enviar <!-- Icono de enviar -->
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Inicializar Sortable.js
+            const stages = document.querySelectorAll(".pipeline-stage");
+            stages.forEach((stage) => {
+                new Sortable(stage, {
+                    group: "pipelines",
+                    animation: 150,
+                    onEnd: function (evt) {
+                        const card = evt.item;
+                        const newStage = evt.to.id;
+
+                        // Cambiar el encabezado de la tarjeta al nuevo estado
+                        const cardHeader = card.querySelector(".card-header");
+                        if (cardHeader) {
+                            cardHeader.textContent = capitalize(newStage);
+                        }
+                    },
+                });
+            });
+
+            function capitalize(string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            }
+
+            // Función para abrir el modal y mostrar detalles del cliente
+            window.openModal = function (nombre, empresa, estado, monto, actividades) {
+                document.getElementById("pipelineModalLabel").textContent = `Detalles de ${nombre}`;
+                document.getElementById("client-details").innerHTML = `
+            <p>Empresa: ${empresa}</p>
+            <p>Estado: ${estado}</p>
+            <p>Monto: $${monto.toLocaleString()}</p>
+        `;
+                const activitiesList = document.getElementById("activities-list");
+                activitiesList.innerHTML = actividades.map((act) => `<li>${act}</li>`).join("");
+            };
+        });
+
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function openModal(name, company, status, amount, activities) {
+            // Rellenar los datos del cliente en el modal
+            document.getElementById('client-name').textContent = name;
+            document.getElementById('client-company').textContent = company;
+            document.getElementById('client-status').textContent = status;
+            document.getElementById('client-amount').textContent = amount;
+
+            // Rellenar la lista de actividades
+            const activitiesList = document.getElementById('activities-list');
+            activitiesList.innerHTML = ''; // Limpiar la lista antes de agregar nuevos elementos
+            activities.forEach(activity => {
+                const li = document.createElement('li');
+                li.textContent = activity;
+                activitiesList.appendChild(li);
+            });
+        }
+
+        // Función para enviar el email (Este es solo un ejemplo, necesitarás un backend para enviarlo realmente)
+        function sendEmail() {
+            const fromEmail = document.getElementById('fromEmail').value;
+            const toEmail = document.getElementById('toEmail').value;
+            const subject = document.getElementById('subject').value;
+            const body = document.getElementById('body').value;
+
+            // Aquí puedes agregar lógica para enviar el correo a través de tu backend
+            console.log('Correo Enviado:', { fromEmail, toEmail, subject, body });
+
+            // Mostrar un mensaje de éxito (puedes reemplazarlo con una notificación real)
+            alert('El correo ha sido enviado con éxito.');
+
+            // Cerrar el modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('sendEmailModal'));
+            modal.hide();
+        }
+    </script>
+    <script>
+        // Inicializa las columnas como áreas de arrastrar y soltar
+        const stages = ["nuevo", "propuesta", "negociacion", "ganados"];
+
+        stages.forEach(stage => {
+            new Sortable(document.getElementById(stage), {
+                group: "pipeline", // Nombre del grupo para que las tarjetas puedan moverse entre columnas
+                animation: 150,
+                onEnd: function (event) {
+                    // Obtiene el título de la columna destino
+                    const newStatus = event.to.id;
+
+                    // Actualiza el título de la tarjeta según la columna
+                    const card = event.item;
+                    const cardHeader = card.querySelector(".card-header");
+                    cardHeader.textContent = capitalizeFirstLetter(newStatus);
+                    card.setAttribute("data-status", capitalizeFirstLetter(newStatus));
+                }
+            });
+        });
+
+        // Función para capitalizar la primera letra de un string
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+    </script>
+
+
+
+
+</body>
+
+</html>

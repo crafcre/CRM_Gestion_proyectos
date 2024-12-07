@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reportes</title>
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .card {
+      cursor: pointer;
+      transition: transform 0.2s ease-in-out;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f6f9;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      background-color: #5e4b8b;
+      color: white;
+      padding-top: 20px;
+    }
+
+    .sidebar a {
+      color: white;
+      padding: 10px;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .sidebar a:hover {
+      background-color: #4a3a6a;
+      border-radius: 5px;
+    }
+
+    /* Content */
+    .content {
+      margin-left: 270px;
+      padding: 20px;
+    }
+
+    .card-number {
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 10px;
+      color: #6c757d;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2><a href="index.html">SACTROM</a></h2>
+    <a href="leads.html">Leads</a>
+    <a href="contactos.html">Contactos</a>
+    <a href="reporte.html">Reportes</a>
+    <a href="pqr.html">PQR</a>
+  </div>
+
+  <div class="content">
+    <div class="container mt-4">
+      <h2 class="mb-4">Reportes</h2>
+      <div class="row">
+        <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+          <div class="card text-center" onclick="showReport('Clientes Gestionados', 'line')">
+            <div class="card-body">
+              <h5 class="card-title">Clientes Gestionados</h5>
+              <div class="card-number" id="clientesGestionadosNum"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+          <div class="card text-center" onclick="showReport('Clientes Concretados', 'bar')">
+            <div class="card-body">
+              <h5 class="card-title">Clientes Concretados</h5>
+              <div class="card-number" id="clientesConcretadosNum"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+          <div class="card text-center" onclick="showReport('Clientes Perdidos', 'pie')">
+            <div class="card-body">
+              <h5 class="card-title">Clientes Perdidos</h5>
+              <div class="card-number" id="clientesPerdidosNum"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+          <div class="card text-center" onclick="showReport('Clientes Conseguidos', 'doughnut')">
+            <div class="card-body">
+              <h5 class="card-title">Clientes Conseguidos</h5>
+              <div class="card-number" id="clientesConseguidosNum"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="reportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reportModalTitle"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <canvas id="reportChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Generate random numbers for the cards
+    function generateCardNumbers() {
+      document.getElementById('clientesGestionadosNum').innerText = `Total: ${Math.floor(Math.random() * 100)}`;
+      document.getElementById('clientesConcretadosNum').innerText = `Total: ${Math.floor(Math.random() * 100)}`;
+      document.getElementById('clientesPerdidosNum').innerText = `Total: ${Math.floor(Math.random() * 100)}`;
+      document.getElementById('clientesConseguidosNum').innerText = `Total: ${Math.floor(Math.random() * 100)}`;
+    }
+
+    generateCardNumbers();
+
+    function showReport(title, chartType) {
+      const modalTitle = document.getElementById('reportModalTitle');
+      const chartCanvas = document.getElementById('reportChart');
+
+      modalTitle.innerText = title;
+
+      if (window.reportChart && typeof window.reportChart.destroy === 'function') {
+        window.reportChart.destroy();
+      }
+
+      const labels = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'];
+      const data = Array.from({ length: labels.length }, () => Math.floor(Math.random() * 100));
+
+      window.reportChart = new Chart(chartCanvas, {
+        type: chartType,
+        data: {
+          labels: labels,
+          datasets: [{
+            label: `Datos de ${title}`,
+            data: data,
+            backgroundColor: chartType === 'pie' || chartType === 'doughnut'
+              ? ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
+              : 'rgba(54, 162, 235, 0.5)',
+            borderColor: chartType === 'pie' || chartType === 'doughnut'
+              ? undefined
+              : 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: chartType === 'pie' || chartType === 'doughnut' }
+          }
+        }
+      });
+
+      const reportModal = new bootstrap.Modal(document.getElementById('reportModal'));
+      reportModal.show();
+    }
+  </script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+</body>
+</html>
